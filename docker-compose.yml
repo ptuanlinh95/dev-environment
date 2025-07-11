@@ -47,9 +47,12 @@ services:
 
   kafka1:
     container_name: kafka1
-    image: confluentinc/cp-kafka
+    image: confluentinc/cp-kafka:7.3.2
     healthcheck:
-      test: ps augwwx | egrep [S]upportedKafka
+      test: ["CMD", "nc", "-z", "localhost", "29091"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
     depends_on:
       - zookeeper
     ports:
@@ -60,13 +63,17 @@ services:
       - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - KAFKA_BROKER_ID=1
-      - BOOTSTRAP_SERVERS=kafka1:29091,kafka2:29092,kafka3:29093
+    volumes:
+      - ./data/kafka1:/var/lib/kafka/data
 
   kafka2:
     container_name: kafka2
-    image: confluentinc/cp-kafka
+    image: confluentinc/cp-kafka:7.3.2
     healthcheck:
-      test: ps augwwx | egrep [S]upportedKafka
+      test: ["CMD", "nc", "-z", "localhost", "29092"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
     depends_on:
       - zookeeper
     ports:
@@ -76,14 +83,18 @@ services:
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - BOOTSTRAP_SERVERS=kafka1:29091,kafka2:29092,kafka3:29093
       - KAFKA_BROKER_ID=2
+    volumes:
+      - ./data/kafka2:/var/lib/kafka/data
 
   kafka3:
     container_name: kafka3
-    image: confluentinc/cp-kafka
+    image: confluentinc/cp-kafka:7.3.2
     healthcheck:
-      test: ps augwwx | egrep [S]upportedKafka
+      test: ["CMD", "nc", "-z", "localhost", "29093"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
     depends_on:
       - zookeeper
     ports:
@@ -92,9 +103,10 @@ services:
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka3:29093,PLAINTEXT_HOST://localhost:9093
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
-      - BOOTSTRAP_SERVERS=kafka1:29091,kafka2:29092,kafka3:29093
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - KAFKA_BROKER_ID=3
+    volumes:
+      - ./data/kafka3:/var/lib/kafka/data
 
   kafka-ui:
     container_name: kafka-ui
@@ -102,5 +114,5 @@ services:
     ports:
       - "8080:8080"
     environment:
-      KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka1:29091,kafka2:29092,kafka3:29093"
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka1:29091,kafka2:29092,kafka3:29093
