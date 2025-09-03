@@ -57,6 +57,9 @@ services:
     container_name: zookeeper
     ports:
       - "2181:2181"
+    volumes:
+      - ./data/zookeeper/data:/var/lib/zookeeper/data
+      - ./data/zookeeper/log:/var/lib/zookeeper/log
     healthcheck:
       test: echo stat | nc localhost 2181
       interval: 10s
