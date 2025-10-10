@@ -50,25 +50,3 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-
-  keycloak:
-    image: quay.io/keycloak/keycloak:25.0.1
-    command: start-dev
-    environment:
-      - KC_DB=postgres
-      - KC_DB_URL_HOST=postgres
-      - KC_DB_USERNAME=postgres
-      - KC_DB_PASSWORD=123456a@
-      - KC_HTTP_PORT=8080
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-      - KC_HOSTNAME=localhost
-      - POSTGRES_DB=keycloak
-    ports:
-      - "8081:8080"
-    volumes:
-      - ./data/keycloak:/opt/keycloak/data
-      - ./data/keycloak/providers:/opt/keycloak/providers
-      - ./data/keycloak/drivers:/opt/keycloak/providers
-    depends_on:
-      - postgres
