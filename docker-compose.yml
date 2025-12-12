@@ -12,6 +12,8 @@ services:
       - REDIS_PORT=6379
       - REDIS_DATABASES=0
       - REDIS_PASSWORD=
+    networks:
+      - shared_network
 
   redis-insight:
     container_name: redis-insight
@@ -21,6 +23,8 @@ services:
       - "8001:8001"
     depends_on:
       - redis
+    networks:
+      - shared_network
 
   postgres:
     container_name: postgres
@@ -33,6 +37,8 @@ services:
       - "5432:5432"
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
+    networks:
+      - shared_network
 
   mongodb:
     container_name: mongodb
@@ -50,3 +56,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    networks:
+      - shared_network
+
+networks:
+  shared_network:
+    name: common_exchange_network
+    driver: bridge
