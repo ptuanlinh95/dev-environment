@@ -18,5 +18,10 @@ services:
       - ./data/keycloak:/opt/keycloak/data
       - ./data/keycloak/providers:/opt/keycloak/providers
       - ./data/keycloak/drivers:/opt/keycloak/providers
-    depends_on:
-      - postgres
+    networks:
+      - shared_network
+
+networks:
+  shared_network:
+    name: common_exchange_network
+    external: true
