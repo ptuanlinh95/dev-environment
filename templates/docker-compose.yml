@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  backend-service:
+    build: .
+    image: named-backend-service:latest
+    container_name: named-backend-service
+    ports:
+      - "8088:8088"
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/named-db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=123456a@
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka1:29091,kafka2:29092,kafka3:29093
+      - CUSTOMISE_KEYCLOAK_ENDPOINT_USERINFO=http://keycloak:8080/realms/business-banking/protocol/openid-connect/userinfo
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    name: common_exchange_network
+    external: true
