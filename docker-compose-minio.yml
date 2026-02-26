@@ -21,3 +21,8 @@ services:
       mc mb localminio/my-bucket || true &&
       tail -f /dev/null
       "
+
+networks:
+  shared_network:
+    name: common_exchange_network
+    external: true
