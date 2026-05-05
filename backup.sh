@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 generate_backup_filename() {
     local db_name=$1
     local timestamp=$(date +"%H%M_%d%m%Y")
@@ -24,7 +26,7 @@ FULL_PATH="backups/$FILE_NAME"
 
 args=(
     docker compose -f "docker-compose.yml"
-    run --rm
+    run --rm -T
     -e PGPASSWORD="$DB_PASSWORD"
     postgres
     pg_dump
@@ -43,5 +45,6 @@ if "${args[@]}" > "$FULL_PATH"; then
     echo "Location: $FULL_PATH"
 else
     echo "Error: Backup process failed!"
+    rm -f "$FULL_PATH"
     exit 1
 fi
